@@ -1,12 +1,12 @@
-package com.needayea.pay.Alipay.service;
+package com.needayea.pay.AliPay.service;
 
 import com.alibaba.fastjson.JSON;
 import com.alipay.api.AlipayApiException;
 import com.alipay.api.AlipayClient;
 import com.alipay.api.DefaultAlipayClient;
 import com.alipay.api.request.AlipayTradePagePayRequest;
-import com.needayea.pay.Alipay.bean.AlipayBean;
-import com.needayea.pay.Alipay.config.AlipayConfig;
+import com.needayea.pay.AliPay.bean.AlipayBean;
+import com.needayea.pay.AliPay.config.AlipayConfig;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;

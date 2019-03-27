@@ -2,8 +2,8 @@ package com.needayea.pay.Resource;
 
 import com.alibaba.fastjson.JSON;
 import com.alipay.api.internal.util.AlipaySignature;
-import com.needayea.pay.Alipay.config.AlipayConfig;
-import com.needayea.pay.Alipay.service.AliPayService;
+import com.needayea.pay.AliPay.config.AlipayConfig;
+import com.needayea.pay.AliPay.service.AliPayService;
 import com.needayea.pay.LianLianPay.bean.PayDataBean;
 import com.needayea.pay.LianLianPay.bean.RetBean;
 import com.needayea.pay.LianLianPay.config.PartnerConfig;
@@ -21,7 +21,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -36,7 +35,7 @@ public class PayResource {
     private LianlianPayService lianlianPayService;
 
     /**
-     *
+     * 提交订单跳转到第三方收银台
      * @param outTradeNo 订单号
      * @param subject  商品名称
      * @param totalAmount  付款金额
@@ -45,7 +44,7 @@ public class PayResource {
      * @return String
      */
     @RequestMapping(value = "/pay")
-    public String aliPay(String outTradeNo, String subject, BigDecimal totalAmount, String body,String type,HttpServletRequest request ,HttpServletResponse response){
+    public String pay(String outTradeNo, String subject, BigDecimal totalAmount, String body,String type,HttpServletRequest request ,HttpServletResponse response){
         // 为防止订单号重否 此处模拟生成唯一订单号
         outTradeNo = PayUtils.createUnilCode();
         //支付宝支付
@@ -73,7 +72,7 @@ public class PayResource {
      * 支付宝异步回调
      */
     @RequestMapping(value = "/alipay/orderNotify", method = RequestMethod.POST)
-    public void orderNotify(HttpServletResponse response, HttpServletRequest request) throws Exception {
+    public void orderNotifyByAli(HttpServletResponse response, HttpServletRequest request) throws Exception {
         Map<String, String> params = new HashMap<String, String>();
         Map requestParams = request.getParameterMap();
         for (Iterator iter = requestParams.keySet().iterator(); iter.hasNext(); ) {
@@ -128,8 +127,15 @@ public class PayResource {
         return "paySuccess";
     }
 
+    /**
+     *  连连支付异步回调地址
+     * @param req
+     * @param resp
+     * @throws ServletException
+     * @throws IOException
+     */
     @RequestMapping(value = "/lianLianpay/orderNotify", method = RequestMethod.POST)
-    protected void orderNotify(HttpServletRequest req, HttpServletResponse resp)
+    protected void orderNotifyByLianLian(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
         resp.setCharacterEncoding("UTF-8");
         System.out.println("进入支付异步通知数据接收处理");

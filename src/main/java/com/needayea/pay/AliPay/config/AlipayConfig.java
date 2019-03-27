@@ -1,4 +1,4 @@
-package com.needayea.pay.Alipay.config;
+package com.needayea.pay.AliPay.config;
 
 import org.springframework.stereotype.Component;
 

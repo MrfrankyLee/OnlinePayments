@@ -1,4 +1,4 @@
-package com.needayea.pay.Alipay.bean;
+package com.needayea.pay.AliPay.bean;
 
 import org.springframework.stereotype.Component;
 
