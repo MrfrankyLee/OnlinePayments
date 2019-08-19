@@ -2,13 +2,13 @@ package com.needayea.pay.Resource;
 
 import com.alibaba.fastjson.JSON;
 import com.alipay.api.internal.util.AlipaySignature;
-import com.needayea.pay.AliPay.config.AlipayConfig;
-import com.needayea.pay.AliPay.service.AliPayService;
-import com.needayea.pay.LianLianPay.bean.PayDataBean;
-import com.needayea.pay.LianLianPay.bean.RetBean;
-import com.needayea.pay.LianLianPay.config.PartnerConfig;
-import com.needayea.pay.LianLianPay.service.LianlianPayService;
-import com.needayea.pay.LianLianPay.utils.LLPayUtil;
+import com.needayea.pay.alipay.config.AlipayConfig;
+import com.needayea.pay.alipay.service.AliPayService;
+import com.needayea.pay.lianlianpay.bean.PayDataBean;
+import com.needayea.pay.lianlianpay.bean.RetBean;
+import com.needayea.pay.lianlianpay.config.PartnerConfig;
+import com.needayea.pay.lianlianpay.service.LianlianPayService;
+import com.needayea.pay.lianlianpay.utils.LLPayUtil;
 import com.needayea.pay.utils.PayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -25,6 +25,10 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+/**
+ * 第三方支付
+ * @author lixiaole
+ */
 @Controller
 @RequestMapping
 public class PayResource {
@@ -101,7 +105,8 @@ public class PayResource {
         boolean verify_result = AlipaySignature.rsaCheckV1(params, AlipayConfig.ALIPAY_PUBLIC_KEY,
                 AlipayConfig.CHARSET, "RSA2");
 
-        if (verify_result) {// 验证成功
+        // 验证成功
+        if (verify_result) {
             // ——请根据您的业务逻辑来编写程序（以下代码仅作参考）——
             if (trade_status.equals("TRADE_FINISHED")) {
                 // 判断该笔订单是否在商户网站中已经做过处理
@@ -121,7 +126,9 @@ public class PayResource {
 
     }
 
-
+    /**
+     * 跳转支付成功页面
+     */
     @RequestMapping(value = "/returnUrl", method = RequestMethod.GET)
     public String returnUrl(HttpServletResponse response, HttpServletRequest request) throws Exception {
         return "paySuccess";
@@ -135,8 +142,7 @@ public class PayResource {
      * @throws IOException
      */
     @RequestMapping(value = "/lianLianpay/orderNotify", method = RequestMethod.POST)
-    protected void orderNotifyByLianLian(HttpServletRequest req, HttpServletResponse resp)
-            throws ServletException, IOException {
+    protected void orderNotifyByLianLian(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         resp.setCharacterEncoding("UTF-8");
         System.out.println("进入支付异步通知数据接收处理");
         RetBean retBean = new RetBean();

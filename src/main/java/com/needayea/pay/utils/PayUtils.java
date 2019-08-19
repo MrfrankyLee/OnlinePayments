@@ -4,6 +4,10 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Random;
 
+/**
+ * 工具类 生成唯一订单号码
+ * @author lixiaole
+ */
 public class PayUtils {
     // 生成唯一编号
     public static String createUnilCode() {
