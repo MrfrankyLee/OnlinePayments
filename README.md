@@ -1,7 +1,7 @@
 # OnlinePayments
-##### JavaWEB支付宝及连连支付两家第三方支付的对接
+##### JavaWEB支付宝第三方支付的对接
 ##### 关于支付宝的对接流程可参考本人这篇[博客](https://blog.csdn.net/lele52080/article/details/88842639)此处不再赘述
-##### 关于连连支付的对接流程可参考本人这篇[博客](https://blog.csdn.net/lele52080/article/details/88842639)此处不再赘述
+
 
 #### 关于该DEMO结构说明
 1. 项目架构 springboot+maven+jsp
