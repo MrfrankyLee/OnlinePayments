@@ -62,4 +62,9 @@ public class AlipayConfig {
      * 支付网关
      */
     public static  String GATEWAY_URL = "https://openapi.alipaydev.com/gateway.do";
+
+    /**
+     * H5 销售产品码 必填
+     */
+    public static String PRODUCT_CODE = "QUICK_WAP_PAY";
 }

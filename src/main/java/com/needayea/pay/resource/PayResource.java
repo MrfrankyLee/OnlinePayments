@@ -1,4 +1,4 @@
-package com.needayea.pay.Resource;
+package com.needayea.pay.resource;
 
 import com.alibaba.fastjson.JSON;
 import com.alipay.api.internal.util.AlipaySignature;
@@ -16,6 +16,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import javax.annotation.Resource;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -33,9 +34,10 @@ import java.util.Map;
 @RequestMapping
 public class PayResource {
 
-    @Autowired
+    @Resource
     private AliPayService aliPayService;
-    @Autowired
+
+    @Resource
     private LianlianPayService lianlianPayService;
 
     /**
@@ -44,39 +46,42 @@ public class PayResource {
      * @param subject  商品名称
      * @param totalAmount  付款金额
      * @param body   商品描述
-     * @param type   支付方式 1 支付宝支付 2 连连支付
+     * @param type   支付方式 1 支付宝PC支付 2 支付宝H5支付 可唤起支付宝App   3 连连支付
      * @return String
      */
     @RequestMapping(value = "/pay")
     public String pay(String outTradeNo, String subject, BigDecimal totalAmount, String body,String type,HttpServletRequest request ,HttpServletResponse response){
         // 为防止订单号重否 此处模拟生成唯一订单号
         outTradeNo = PayUtils.createUnilCode();
-        //支付宝支付
-        if(type.equalsIgnoreCase("1")){
-            return aliPayService.alipay(outTradeNo,subject,totalAmount.toString(),body,AlipayConfig.NOTIFY_URL,request,response);
+        switch (type){
+            // 支付宝PC支付
+            case "1":
+                return aliPayService.pcAlipay(outTradeNo,subject,totalAmount.toString(),body,AlipayConfig.NOTIFY_URL,request,response);
+            // 支付宝H5支付 可唤起支付宝App
+            case "2":
+                return aliPayService.h5Alipay(outTradeNo,subject,totalAmount,body,AlipayConfig.NOTIFY_URL,request,response);
+            // 连连支付
+            case "3":
+                String url = "";
+                try {
+                    url = lianlianPayService.lianlianpay(outTradeNo,subject,totalAmount.toString(),body, PartnerConfig.NOTIFY_URL,request,response);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                if(!StringUtils.isEmpty(url)){
+                    request.setAttribute("gateway_url", url);
+                    return "gotoPlainPay";
+                }
+            default:
+                return "payFail";
         }
-        //连连支付
-        if(type.equalsIgnoreCase("2")){
-            String url = "";
-            try {
-                url = lianlianPayService.lianlianpay(outTradeNo,subject,totalAmount.toString(),body, PartnerConfig.NOTIFY_URL,request,response);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            if(!StringUtils.isEmpty(url)){
-                request.setAttribute("gateway_url", url);
-                return "gotoPlainPay";
-            }
-        }
-
-        return "payFail";
     }
 
     /**
      * 支付宝异步回调
      */
     @RequestMapping(value = "/alipay/orderNotify", method = RequestMethod.POST)
-    public void orderNotifyByAli(HttpServletResponse response, HttpServletRequest request) throws Exception {
+    public String orderNotifyByAli(HttpServletResponse response, HttpServletRequest request) throws Exception {
         Map<String, String> params = new HashMap<String, String>();
         Map requestParams = request.getParameterMap();
         for (Iterator iter = requestParams.keySet().iterator(); iter.hasNext(); ) {
@@ -108,22 +113,16 @@ public class PayResource {
         // 验证成功
         if (verify_result) {
             // ——请根据您的业务逻辑来编写程序（以下代码仅作参考）——
-            if (trade_status.equals("TRADE_FINISHED")) {
-                // 判断该笔订单是否在商户网站中已经做过处理
-                // 如果没有做过处理，根据订单号（out_trade_no）在商户网站的订单系统中查到该笔订单的详细，并执行商户的业务程序
-                // 请务必判断请求时的total_fee、seller_id与通知时获取的total_fee、seller_id为一致的
-                // 如果有做过处理，不执行商户的业务程序
-                // 注意：
-                // 如果签约的是可退款协议，退款日期超过可退款期限后（如三个月可退款），支付宝系统发送该交易状态通知
-                // 如果没有签约可退款协议，那么付款完成后，支付宝系统发送该交易状态通知。
-            } else if (trade_status.equals("TRADE_SUCCESS")) {
-                // 支付交易成功  处理订单
+            if (trade_status.equals("TRADE_SUCCESS")) {
                 System.out.println("交易成功");
+                // TODO 参考文档 https://docs.open.alipay.com/203/105286/
+                //TODO 一般在此处理 支付成功后的业务逻辑 处理成功返回 "success" 支付宝接收到该指令后会停止重复回调
+                return "success";
             }
         } else {// 验证失败
             System.out.println("验证失败");
         }
-
+        return "payFail";
     }
 
     /**
