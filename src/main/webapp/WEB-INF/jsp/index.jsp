@@ -21,9 +21,9 @@
         <input type="text" name="totalAmount" value="0.01"><br>
         *商品描述 :
         <input type="text" name="body" value="Bigger than bigger"><br>
-        <input type="button" value="支付宝PC支付" onclick="submitForm('/pay?type=1')">
-        <input type="button" value="支付宝H5支付" onclick="submitForm('/pay?type=2')">
-        <input type="button" value="连连支付  " onclick="submitForm('/pay?type=3')">
+        <input type="button" value="支付宝PC支付" onclick="submitForm('/pay?type=AliPcPay')">
+        <input type="button" value="支付宝H5支付" onclick="submitForm('/pay?type=AliH5Pay')">
+        <input type="button" value="连连支付  " onclick="submitForm('/pay?type=LianLianPay')">
     </form>
 </div>
 </body>

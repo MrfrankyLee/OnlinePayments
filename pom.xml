@@ -54,6 +54,14 @@
             <version>1.2.29</version>
         </dependency>
 
+        <!--lombok 依赖 -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.4</version>
+        </dependency>
+
+
         <!-- 连连支付相关jar包 -->
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
